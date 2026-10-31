@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · what the merged reports show'
 owner: codeSanja
-status: open
+status: closed
 reviewed: 2026-10-31
 signature: codeSanja
 ---
@@ -16,25 +16,26 @@ signature: codeSanja
   const filed = { parser: `${repo}/1`, hint: `${repo}/2` };
 </script>
 
-[#4471](/kb/incidents/4471) says one issue, one fix queued. Its reports show two problems, and
-the queued fix reaches only one of them. Each problem now has its own ticket.
+[#4471](/kb/incidents/4471) says one issue, one fix queued. Its reports show two problems, and each
+now has its own ticket. Engineering closed #4471 on 5 October: the parser is fixed, and the hint
+will not be fixed because the `booking-v3` form is retired.
 
 <CauseTable ticket={4471} {filed} />
 
 <Callout kind="warn">
-Fixing the parser does not close the hint ticket. Keep the hint ticket open after the parser fix ships.
+The parser fix did not touch the hint problem. That problem ended only because `booking-v3` is retired,
+so do not count its reports as fixed by the parser change.
 </Callout>
 
 ## The two problems
 
 **[Parser](https://github.com/codeSanja/s01e03-what-it-shows/issues/1).** The shared parser reads
 every date month first, and these tenants write the day first. A date comes out with day and month
-swapped. The fix is to parse by the tenant's locale.
+swapped. Fixed: `fix(dates): parse dd/mm for eu locales`.
 
 **[Hint](https://github.com/codeSanja/s01e03-what-it-shows/issues/2).** The `booking-v3` form tells
 people to type the month first, then reads the date day first. Only reports through that form belong
-here. The same tenants' app and email reports go through the parser. The fix is to make the hint
-match how the form reads the date.
+here. The same tenants' app and email reports go through the parser. Won't fix: `booking-v3` form retired.
 
 ## How to tell them apart
 
@@ -48,7 +49,7 @@ problems ended up in one ticket.
 
 The desk notes list reports that read as a one-day move, or as two clients in different places
 getting different days. The table's footnote counts them. They are filed under the parser by tenant,
-but a day-month swap cannot move a date by one day, and this export does not show their cause. Check
-them after the parser fix: if they still happen, they need their own ticket.
+but a day-month swap cannot move a date by one day, and this export does not show their cause. Now that
+the parser is fixed, watch for new reports like them: if they still come in, they need their own ticket.
 
 <RenderStamp {signature} />
