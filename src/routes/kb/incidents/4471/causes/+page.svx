@@ -1,0 +1,54 @@
+---
+layout: runbook
+title: '#4471 · what the merged reports show'
+owner: codeSanja
+status: open
+reviewed: 2026-10-31
+signature: codeSanja
+---
+
+<script>
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+
+  const repo = 'https://github.com/codeSanja/s01e03-what-it-shows/issues';
+  const filed = { parser: `${repo}/1`, hint: `${repo}/2` };
+</script>
+
+[#4471](/kb/incidents/4471) says one issue, one fix queued. Its reports show two problems, and
+the queued fix reaches only one of them. Each problem now has its own ticket.
+
+<CauseTable ticket={4471} {filed} />
+
+<Callout kind="warn">
+Fixing the parser does not close the hint ticket. Keep the hint ticket open after the parser fix ships.
+</Callout>
+
+## The two problems
+
+**[Parser](https://github.com/codeSanja/s01e03-what-it-shows/issues/1).** The shared parser reads
+every date month first, and these tenants write the day first. A date comes out with day and month
+swapped. The fix is to parse by the tenant's locale.
+
+**[Hint](https://github.com/codeSanja/s01e03-what-it-shows/issues/2).** The `booking-v3` form tells
+people to type the month first, then reads the date day first. Only reports through that form belong
+here. The same tenants' app and email reports go through the parser. The fix is to make the hint
+match how the form reads the date.
+
+## How to tell them apart
+
+Read the tenant and the channel, not the subject or the intake tag. Both problems produce the same
+subjects, because the subject describes what the reporter saw. The intake tag is a guess from the
+browser, as the "tagged as" column shows. `causes.ts` holds the rule, and
+[the triage page](/kb/triage/dedupe) lets you try it. Its subject-matching rule is how these two
+problems ended up in one ticket.
+
+## Still open
+
+The desk notes list reports that read as a one-day move, or as two clients in different places
+getting different days. The table's footnote counts them. They are filed under the parser by tenant,
+but a day-month swap cannot move a date by one day, and this export does not show their cause. Check
+them after the parser fix: if they still happen, they need their own ticket.
+
+<RenderStamp {signature} />
